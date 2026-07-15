@@ -1,0 +1,71 @@
+# --- ROS / colcon / catkin build outputs ---
+build/
+install/
+log/
+devel/
+.catkin_tools/
+*.pyc
+__pycache__/
+
+# --- editor / OS junk ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- CAD source files must NOT be committed ---
+*.sldprt
+*.sldasm
+*.SLDPRT
+*.SLDASM
+*.step
+*.STEP
+*.stp
+*.STP
+*.iges
+*.IGES
+*.igs
+*.IGS
+*.x_t
+*.x_b
+*.f3d
+*.blend
+*.blend1
+*.blend@
+
+# --- controlled artifacts: deny-list by extension ---
+#
+# NOTE: controlled artifacts that are ALREADY in the tree are
+# grandfathered by the explicit path allow-list below and by CI's
+# allow-listed set. Any NEW file matching one of these extensions is
+# blocked here first, and blocked again in .github/workflows/ci.yml
+# unless it is added to both allow-lists (which requires the owner
+# sign-offs described in THIRD_PARTY_NOTICES.md).
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.so
+*.so.*
+*.dll
+*.dylib
+*.lib
+*.whl
+*.bag
+*.mcap
+
+# --- explicit allow-list: grandfathered controlled artifacts ---
+!onnxruntime_sdk/lib/libonnxruntime.so
+!onnxruntime_sdk/lib/libonnxruntime.so.1.10.0
+!tron2_controllers/config/SF_TRON2A/policy/policy.onnx
+!tron2_controllers/config/SF_TRON2A/policy/encoder.onnx
+!tron2_controllers/config/WF_TRON2A/policy/policy.onnx
+!tron2_controllers/config/WF_TRON2A/policy/encoder.onnx
+
+# --- generated / scratch ---
+/tmp/
+/out/
+*.log

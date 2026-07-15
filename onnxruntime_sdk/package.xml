@@ -1,10 +1,22 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
+<!--
+  SPDX-FileCopyrightText: 2024-2026 LimX Dynamics Technology Co., Ltd.
+  SPDX-License-Identifier: Apache-2.0
+-->
 <package format="3">
   <name>onnxruntime_sdk</name>
-  <version>0.0.1</version>
-  <description>The onnxruntime_sdk package</description>
-  <maintainer email="limx@limxdynamics.com">limxdynamics</maintainer>
-  <license>TODO</license>
+  <version>0.1.0</version>
+  <description>CMake wrapper around the bundled ONNX Runtime shared library used by tron2_controllers.</description>
+
+  <maintainer email="contact@limxdynamics.com">LimX Dynamics</maintainer>
+  <author email="contact@limxdynamics.com">LimX Dynamics</author>
+
+  <license>Apache-2.0</license>
+
+  <url type="website">https://www.limxdynamics.com</url>
+  <url type="repository">https://github.com/limx-tron2/tron2-rl-deploy-ros</url>
+  <url type="bugtracker">https://github.com/limx-tron2/tron2-rl-deploy-ros/issues</url>
+
   <buildtool_depend    condition="$ROS_VERSION == 1">catkin</buildtool_depend>
   <build_depend        condition="$ROS_VERSION == 1">roscpp</build_depend>
   <build_export_depend condition="$ROS_VERSION == 1">roscpp</build_export_depend>

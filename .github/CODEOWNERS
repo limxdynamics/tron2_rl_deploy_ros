@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# CODEOWNERS for tron2-rl-deploy-ros
+#
+# Order matters: the LAST matching pattern wins for each file.
+# Replace the placeholder handles below with real GitHub logins before
+# enabling branch protection that requires code-owner review.
+
+# Default owners: repo maintainers / meta files
+*                                       @limx-tron2/maintainers
+
+# Open-source scaffolding & policy
+/LICENSE                                @limx-tron2/legal @limx-tron2/maintainers
+/NOTICE                                 @limx-tron2/legal @limx-tron2/maintainers
+/THIRD_PARTY_NOTICES.md                 @limx-tron2/legal @limx-tron2/maintainers @limx-tron2/model @limx-tron2/sdk
+/SECURITY.md                            @limx-tron2/security @limx-tron2/safety
+/CONTRIBUTING.md                        @limx-tron2/maintainers
+/CHANGELOG.md                           @limx-tron2/maintainers
+
+# CI / templates
+/.github/                               @limx-tron2/maintainers
+
+# Documentation media (owner audit before merge)
+/doc/                                   @limx-tron2/content @limx-tron2/legal
+
+# ROS package: real-hardware interface. Safety owner is required.
+/tron2_hw/                              @limx-tron2/hardware @limx-tron2/safety
+/tron2_hw/launch/                       @limx-tron2/safety @limx-tron2/hardware
+/tron2_hw/docs/bringup_mvp.md           @limx-tron2/safety @limx-tron2/hardware
+/tron2_hw/package.xml                   @limx-tron2/legal @limx-tron2/hardware
+
+# ROS package: RL controllers + ONNX weights.
+/tron2_controllers/                     @limx-tron2/controls @limx-tron2/model
+/tron2_controllers/config/*/policy/     @limx-tron2/model @limx-tron2/safety @limx-tron2/legal
+/tron2_controllers/package.xml          @limx-tron2/legal @limx-tron2/controls
+
+# ROS package: shared hardware-interface headers.
+/robot_common/                          @limx-tron2/hardware
+/robot_common/package.xml               @limx-tron2/legal @limx-tron2/hardware
+
+# ROS package: bundled ONNX Runtime wrapper.
+/onnxruntime_sdk/                       @limx-tron2/sdk
+/onnxruntime_sdk/lib/                   @limx-tron2/sdk @limx-tron2/legal @limx-tron2/security
+/onnxruntime_sdk/package.xml            @limx-tron2/legal @limx-tron2/sdk

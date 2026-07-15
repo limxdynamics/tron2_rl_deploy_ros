@@ -1,0 +1,164 @@
+# SPDX-License-Identifier: Apache-2.0
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-scan:
+    name: Lint / license & provenance scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: package.xml well-formedness
+        run: |
+          set -e
+          sudo apt-get update && sudo apt-get install -y libxml2-utils
+          # Every package.xml must be well-formed XML.
+          shopt -s globstar nullglob
+          files=$(git ls-files '**/package.xml')
+          [ -n "$files" ] || { echo "no package.xml found"; exit 1; }
+          for f in $files; do
+            echo "── xmllint $f"
+            xmllint --noout "$f"
+          done
+
+      - name: Unresolved <license> lines must carry a ⚠ TO CONFIRM annotation
+        run: |
+          set -e
+          bad=0
+          for f in $(git ls-files '**/package.xml'); do
+            # For every line containing <license>TODO or <license>Proprietary,
+            # the immediately preceding non-blank line MUST contain
+            # "⚠ TO CONFIRM". Silently removing the annotation therefore
+            # fails CI, and silently changing the value to Apache-2.0
+            # would surface in the license-field audit below.
+            awk -v file="$f" '
+              BEGIN { prev=""; rc=0 }
+              /<license>(TODO|Proprietary)</ {
+                if (prev !~ /⚠ TO CONFIRM/) {
+                  printf("::error file=%s,line=%d::Unresolved <license> without adjacent ⚠ TO CONFIRM annotation: %s\n", file, NR, $0)
+                  rc=1
+                }
+              }
+              { if ($0 !~ /^[[:space:]]*$/) prev=$0 }
+              END { exit rc }
+            ' "$f" || bad=$((bad+1))
+          done
+          # Also emit an informational audit of every <license> field.
+          echo "── license field audit"
+          grep -Hn '<license>' $(git ls-files '**/package.xml') || true
+          if [ $bad -ne 0 ]; then exit 1; fi
+
+      - name: Deny-list scan for uncontrolled binaries / weights / bags
+        run: |
+          set -e
+          # Any file matching these extensions must be on the allow-list
+          # below. New entries require owner sign-off recorded in
+          # THIRD_PARTY_NOTICES.md; see CONTRIBUTING.md.
+          allow=$(cat <<'EOF'
+          onnxruntime_sdk/lib/libonnxruntime.so
+          onnxruntime_sdk/lib/libonnxruntime.so.1.10.0
+          tron2_controllers/config/SF_TRON2A/policy/policy.onnx
+          tron2_controllers/config/SF_TRON2A/policy/encoder.onnx
+          tron2_controllers/config/WF_TRON2A/policy/policy.onnx
+          tron2_controllers/config/WF_TRON2A/policy/encoder.onnx
+          EOF
+          )
+          hits=$(git ls-files | grep -iE '\.(onnx|pt|pth|ckpt|so(\.[0-9.]+)?|dll|dylib|lib|whl|bag|mcap)$' || true)
+          bad=0
+          for h in $hits; do
+            if ! echo "$allow" | grep -Fxq "$h"; then
+              echo "::error file=$h::Controlled artifact not on the CI allow-list. Add to .github/workflows/ci.yml AND THIRD_PARTY_NOTICES.md with owner sign-off, or remove the file."
+              bad=$((bad+1))
+            fi
+          done
+          if [ $bad -ne 0 ]; then exit 1; fi
+
+      - name: Private-IP scan (allow-list documented example only)
+        run: |
+          set -e
+          # Any 10.x / 192.168.x / 172.16-31.x address in tracked files
+          # must be either the documented example 10.192.1.2 (pending
+          # legal / SRE sign-off — see THIRD_PARTY_NOTICES.md §7) or an
+          # obvious placeholder token like <ROBOT_IP>.
+          allowed_ip='10\.192\.1\.2'
+          hits=$(git grep -InE '\b(10\.[0-9]+\.[0-9]+\.[0-9]+|192\.168\.[0-9]+\.[0-9]+|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]+\.[0-9]+)\b' -- ':!*.onnx' ':!*.so' ':!*.so.*' || true)
+          bad=0
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            if echo "$line" | grep -qE "$allowed_ip"; then
+              continue
+            fi
+            echo "::error::Private IP outside allow-list: $line"
+            bad=$((bad+1))
+          done <<< "$hits"
+          if [ $bad -ne 0 ]; then exit 1; fi
+
+      - name: Unresolved license markers in top-level docs
+        run: |
+          set -e
+          # Docs describe unresolved items but must always tag them with
+          # the ⚠ TO CONFIRM marker. Bare "TODO: license" / "unknown
+          # license" wording is a policy defect.
+          if grep -rniE 'todo: license|unknown license' \
+               README.md THIRD_PARTY_NOTICES.md CHANGELOG.md \
+               CONTRIBUTING.md SECURITY.md NOTICE 2>/dev/null; then
+            echo "::error::Unresolved license markers in top-level docs (must be ⚠ TO CONFIRM)"
+            exit 1
+          fi
+
+      - name: EXIF sanity (doc/ media must not carry GPS / author / serial)
+        run: |
+          sudo apt-get install -y libimage-exiftool-perl
+          set -e
+          bad=0
+          shopt -s nullglob
+          for img in doc/*.jpg doc/*.JPG doc/*.jpeg doc/*.png doc/*.gif doc/*.GIF; do
+            [ -f "$img" ] || continue
+            hits=$(exiftool "$img" | grep -iE '(gps|serial|author|artist|owner)' || true)
+            if [ -n "$hits" ]; then
+              echo "::error file=$img::EXIF discloses $hits"
+              bad=$((bad+1))
+            fi
+          done
+          if [ $bad -ne 0 ]; then exit 1; fi
+
+  catkin-build:
+    name: catkin_make (ROS Noetic)
+    runs-on: ubuntu-latest
+    # Real build depends on the sibling repositories `robot-description`
+    # and `limxsdk-lowlevel` being available in the workspace. That is
+    # not yet wired up in CI; the job is defined so it can be enabled
+    # by release engineering once those dependencies are published.
+    if: ${{ false }}
+    container:
+      image: ros:noetic-ros-base
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: src/tron2-rl-deploy-ros
+      - name: Install deps
+        run: |
+          apt-get update
+          apt-get install -y \
+            ros-noetic-ros-control \
+            ros-noetic-ros-controllers \
+            ros-noetic-controller-manager \
+            ros-noetic-hardware-interface \
+            ros-noetic-realtime-tools \
+            libeigen3-dev \
+            build-essential
+      - name: catkin_make
+        shell: bash
+        run: |
+          source /opt/ros/noetic/setup.bash
+          catkin_make

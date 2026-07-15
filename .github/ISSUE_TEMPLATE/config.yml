@@ -1,0 +1,15 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security or robot-safety vulnerability
+    url: mailto:contact@limxdynamics.com
+    about: >
+      Do NOT open a public issue for security or robot-safety reports.
+      Email contact@limxdynamics.com with subject prefix
+      [tron2-rl-deploy-ros]; see SECURITY.md for the full policy.
+      Anything that can move the real robot or defeat the
+      emergency-stop service belongs here.
+  - name: General questions
+    url: https://github.com/limx-tron2/tron2-rl-deploy-ros/discussions
+    about: >
+      Use Discussions for how-to questions, integration help, or
+      ROS / ONNX Runtime quirks that are not yet a defect.
