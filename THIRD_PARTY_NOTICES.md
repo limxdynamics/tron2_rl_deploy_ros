@@ -36,28 +36,42 @@ paired with a fresh `⚠ TO CONFIRM` annotation.
 
 ## 2. Bundled ONNX Runtime binary
 
-| Path | Size | Purpose |
-|------|------|---------|
-| `onnxruntime_sdk/lib/libonnxruntime.so`        | ~14.3 MB | Runtime linked by `tron2_controllers` (see `tron2_controllers/CMakeLists.txt`). |
-| `onnxruntime_sdk/lib/libonnxruntime.so.1.10.0` | ~14.3 MB | Versioned SONAME target (identical bytes). |
-| `onnxruntime_sdk/include/*`                    | headers  | Public C / C++ headers for the same version. |
+| Path | Size (bytes) | SHA-256 | Kind (`file` output) |
+|------|-------------:|---------|----------------------|
+| `onnxruntime_sdk/lib/libonnxruntime.so`        | 14 320 080 | `0db7bb6201cc86370e54cb9ff0baf768a75660a872f4732822d325c84ac3d9d9` | ELF 64-bit LSB shared object, x86-64, SYSV, dynamically linked |
+| `onnxruntime_sdk/lib/libonnxruntime.so.1.10.0` | 14 320 080 | `0db7bb6201cc86370e54cb9ff0baf768a75660a872f4732822d325c84ac3d9d9` | Byte-identical soname alias of the file above |
+| `onnxruntime_sdk/include/*`                    | headers    | —                                                                    | Public C / C++ headers for the same version |
+
+Evidence collected 2026-07-16: SHA-256 and file-type strings computed
+against the tracked working-tree files (reproduce with the block in
+§2.1 below). The two `.so` files are **byte-identical** (same SHA-256);
+one is a soname alias of the other, not a second architecture. Only a
+**single Linux x86-64 SYSV build** is shipped — there is no aarch64
+variant tracked in this repository.
 
 - **Upstream project:** Microsoft ONNX Runtime — <https://github.com/microsoft/onnxruntime>
 - **Upstream license:** MIT (see the ONNX Runtime `LICENSE`).
-- **Bundled version:** filename suggests **1.10.0**. ⚠ TO CONFIRM by
+- **Bundled version:** filename claims **1.10.0**. ⚠ TO CONFIRM by
   SDK owner: exact upstream tag / commit, build flags (CPU / CUDA /
-  TensorRT / …), target platform (`linux/x86_64` vs `linux/aarch64`),
-  and SHA-256 of the two `.so` files.
+  TensorRT / …), and match the recorded SHA-256 to an authorised build.
 - **Redistribution clearance:** ⚠ TO CONFIRM. MIT permits
   redistribution with attribution, but this repo does **not** yet
   ship the ONNX Runtime `LICENSE` and `ThirdPartyNotices.txt` next to
   the binary as MIT requires. Before release, either:
   - **(A)** vendor the upstream `LICENSE` / `ThirdPartyNotices.txt`
-    into `onnxruntime_sdk/`, record the SHA-256, and cite the exact
-    upstream tag; **or**
+    into `onnxruntime_sdk/`, cite the exact upstream tag matching the
+    SHA-256 above, and keep the recorded SHA-256 here; **or**
   - **(B)** remove the binary and headers, and require downstream
     users to install `onnxruntime` from upstream releases (documented
     in `README.md`).
+
+### 2.1 Reproduce the evidence
+
+```bash
+sha256sum onnxruntime_sdk/lib/libonnxruntime.so \
+          onnxruntime_sdk/lib/libonnxruntime.so.1.10.0
+file      onnxruntime_sdk/lib/libonnxruntime.so
+```
 
 Owner action: **SDK lead + legal / OSPO**.
 
@@ -67,12 +81,18 @@ Owner action: **SDK lead + legal / OSPO**.
 
 Four ONNX files are checked into the tree:
 
-| Path | Size | Kind |
-|------|------|------|
-| `tron2_controllers/config/SF_TRON2A/policy/policy.onnx`  | ~791 KB | RL policy weights, SF variant. |
-| `tron2_controllers/config/SF_TRON2A/policy/encoder.onnx` | ~589 KB | Observation encoder weights, SF variant. |
-| `tron2_controllers/config/WF_TRON2A/policy/policy.onnx`  | ~770 KB | RL policy weights, WF variant. |
-| `tron2_controllers/config/WF_TRON2A/policy/encoder.onnx` | ~503 KB | Observation encoder weights, WF variant. |
+| Path | Size (bytes) | SHA-256 |
+|------|-------------:|---------|
+| `tron2_controllers/config/SF_TRON2A/policy/policy.onnx`  | 791 050 | `0b353a087c912c33b9ba690560f3501cf7bf2bf25fde91c07ee2bdfb36502d3a` |
+| `tron2_controllers/config/SF_TRON2A/policy/encoder.onnx` | 588 998 | `5f7e2b8865fda7c284f0dd98b79f5c1d78935c83cbf43bf311d768154937111e` |
+| `tron2_controllers/config/WF_TRON2A/policy/policy.onnx`  | 770 148 | `3000df452681056738a15b46fa67f4f8436b34bbb6dcc6b22fa08b1b1f8dd071` |
+| `tron2_controllers/config/WF_TRON2A/policy/encoder.onnx` | 503 276 | `507d0630d78873f7aabfeab4eae9d7669610d709fcc903c4296d1908da54b3e7` |
+
+Evidence collected 2026-07-16: all four files are **byte-identical**
+to the corresponding files in the sibling `tron2-rl-deploy-python` repo
+(`controllers/model/{SF,WF}_TRON2A/{policy,encoder}.onnx`). Any owner
+decision made about these four models must be applied to both repos
+consistently — they are one artifact under two paths.
 
 For **each** of the four files, the model owner must resolve the
 following before a public release:
@@ -92,8 +112,9 @@ following before a public release:
   public bring-up.
 
 If any of the four cannot be cleared, remove the file (and add its
-path to `.gitignore`) before release. Do **not** silently swap in
-different weights — record the substitution here.
+path to `.gitignore`) **in both repositories** before release. Do
+**not** silently swap in different weights — record the substitution
+here and in the sibling `tron2-rl-deploy-python/MODEL_CARD.md`.
 
 Owner action: **model lead + robot-safety lead + legal**.
 
@@ -162,11 +183,18 @@ badges, and screens containing internal URLs / hostnames.
 Not shipped as separate files, but present in text and therefore
 subject to legal / safety review before publication:
 
-- Private-network robot IP `10.192.1.2` in `README.md`,
-  `tron2_hw/launch/tron2_hw.launch`, `tron2_hw/docs/bringup_mvp.md`.
-  ⚠ TO CONFIRM — is this an internal-only example that should be
-  replaced with a documented placeholder (e.g. `<ROBOT_IP>`) before
-  release, or does it correspond to a customer-facing default?
+- **Private-network robot IP.** All Markdown / YAML command examples
+  use `<robot-ip>` as a placeholder token; substitute your robot's
+  actual IP before running. The source-side defaults in
+  `tron2_hw/src/Tron2HW.cpp:19`, `tron2_hw/src/tron2_hw_node.cpp:23`,
+  and the launch argument default in `tron2_hw/launch/tron2_hw.launch:3`
+  retain the literal `10.192.1.2` as a documentation example
+  describing typical real-hardware usage. This is a documentation
+  value only and is not the address of any LimX production network;
+  the private-IP handling policy is declared in `SECURITY.md` under
+  "Known placeholders and internal identifiers". CI's private-IP
+  scan allow-lists that one literal — any other RFC 1918 / RFC 6598
+  address in-tree fails the build.
 - Emergency-stop / start / stop service names and topics documented
   in `tron2_hw/docs/bringup_mvp.md`. ⚠ TO CONFIRM by robot-safety
   owner: publishing these interface names is safe (they are already
