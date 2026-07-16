@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     each such line is immediately preceded by an `⚠ TO CONFIRM`
     annotation comment (so the risk cannot be silently removed).
   - Private-IP scan with an allow-list for the documented example
-    `10.192.1.2` — any other private address fails the build.
+    `<robot-ip>` — any other private address fails the build.
   - EXIF sanity for `doc/` media (GPS / serial / author / artist).
 - Issue templates (`bug_report.md`, `feature_request.md`, `config.yml`)
   and pull-request template under `.github/`. PR template includes an
@@ -99,12 +99,6 @@ checklist.
   - `tron2_controllers/config/WF_TRON2A/policy/encoder.onnx`
   For **each** file: training pipeline / experiment ID, training-data
   licensing, model card, SHA-256, and public-release approval.
-- **Legal / SRE — private-network IP `10.192.1.2`:**
-  Confirm whether the address is an internal example that should be
-  replaced with a documented placeholder (`<ROBOT_IP>`), or an
-  intentional customer-facing default. Occurs in `README.md`,
-  `tron2_hw/launch/tron2_hw.launch`, `tron2_hw/docs/bringup_mvp.md`.
-  Value has been left unchanged pending sign-off.
 - **Robot-safety owner — emergency-stop and real-hardware bring-up:**
   Review `tron2_hw/docs/bringup_mvp.md` (start / stop / emergency-stop
   services) and `tron2_hw/launch/tron2_hw.launch` (policy / encoder
@@ -116,6 +110,17 @@ checklist.
   `doc/wf.GIF`, `doc/sfgazebo-ezgif.com-video-to-gif-converter.gif`,
   `doc/wfgazebo.gif` for individuals, office locations, badges,
   whiteboards, and internal hostnames.
+
+### Resolved (2026-07-16)
+
+- **Private-network IP** — resolved 2026-07-16 per owner decision.
+  All Markdown / YAML command examples now use `<robot-ip>` as a
+  placeholder token. Source-side defaults in
+  `tron2_hw/src/Tron2HW.cpp:19`, `tron2_hw/src/tron2_hw_node.cpp:23`,
+  and `tron2_hw/launch/tron2_hw.launch:3` retain the literal
+  `10.192.1.2` as a documentation example; this is a documentation
+  value only, declared in `SECURITY.md`. CI's private-IP scan
+  continues to allowlist that one value.
 
 ## [0.1.0] — TBD
 

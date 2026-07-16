@@ -5,6 +5,11 @@
 
 [English](README.md) | [中文](README_zh-CN.md)
 
+> **Distribution.** The primary distribution of this repository is
+> [`github.com/limx-tron2/tron2-rl-deploy-ros`](https://github.com/limx-tron2/tron2-rl-deploy-ros).
+> LimX's internal GitLab hosts a mirror; please open issues and pull
+> requests on GitHub.
+
 # TRON2 ROS workspace (`~/limx_ws/src`)
 
 This directory is the TRON2 source space (catkin `src`) under ROS Noetic. It contains both simulation-side and control-side packages.
@@ -146,15 +151,20 @@ roslaunch tron2_hw tron2_controller_sim.launch robot_type:=SF_TRON2A
 ### 4.3 Real-hardware deployment
 
 ```bash
-roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=10.192.1.2
+roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 ```
 
-> Note on `10.192.1.2`: this is an internal-lab example address and
-> appears in the same form in `tron2_hw/launch/tron2_hw.launch` and
-> `tron2_hw/docs/bringup_mvp.md`. Its value is intentionally left
-> unchanged in this scaffolding pass — legal / SRE sign-off is
-> pending on whether to replace it with a documented placeholder
-> (e.g. `<ROBOT_IP>`). See `THIRD_PARTY_NOTICES.md` §7.
+**Note on `<robot-ip>`.** The `<robot-ip>` token in shipped command
+examples is a placeholder — substitute your robot's actual IP
+before running. The source-side default values in
+`tron2_hw/src/Tron2HW.cpp`, `tron2_hw/src/tron2_hw_node.cpp`, and
+the launch argument default in `tron2_hw/launch/tron2_hw.launch`
+retain the literal `10.192.1.2` as a documentation example
+describing typical real-hardware usage. This is a documentation
+value only and is not the address of any LimX production network.
+See [`SECURITY.md`](SECURITY.md) and
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) §7 for the
+private-IP handling policy.
 
 ## 5. Simulation vs real-hardware logic (important safety notes)
 
@@ -225,7 +235,8 @@ find . -name 'package.xml' -exec grep -Hn '<license>' {} \;
 #    match the pre-existing controlled set in THIRD_PARTY_NOTICES.md.
 git ls-files | grep -iE '\.(onnx|pt|pth|ckpt|so(\.[0-9.]+)?|dll|dylib|lib|whl|bag|mcap)$'
 
-# 5. Private-IP scan (only the documented example 10.192.1.2 is allowed).
+# 5. Private-IP scan (only the documented example 10.192.1.2 is allowed;
+#    Markdown/YAML examples should use the <robot-ip> substitution token).
 grep -RIn --exclude-dir=.git -E \
   '\b(10\.[0-9]+\.[0-9]+\.[0-9]+|192\.168\.[0-9]+\.[0-9]+)\b' .
 ```

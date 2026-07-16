@@ -87,9 +87,10 @@ jobs:
         run: |
           set -e
           # Any 10.x / 192.168.x / 172.16-31.x address in tracked files
-          # must be either the documented example 10.192.1.2 (pending
-          # legal / SRE sign-off — see THIRD_PARTY_NOTICES.md §7) or an
-          # obvious placeholder token like <ROBOT_IP>.
+          # must reduce to the documented example 10.192.1.2 (declared
+          # in SECURITY.md and THIRD_PARTY_NOTICES.md §7). Markdown /
+          # YAML command examples should use the <robot-ip> substitution
+          # token rather than a literal address.
           allowed_ip='10\.192\.1\.2'
           hits=$(git grep -InE '\b(10\.[0-9]+\.[0-9]+\.[0-9]+|192\.168\.[0-9]+\.[0-9]+|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]+\.[0-9]+)\b' -- ':!*.onnx' ':!*.so' ':!*.so.*' || true)
           bad=0

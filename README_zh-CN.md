@@ -5,6 +5,11 @@
 
 [English](README.md) | [中文](README_zh-CN.md)
 
+> **发布渠道**。本仓库的主发布地址为
+> [`github.com/limx-tron2/tron2-rl-deploy-ros`](https://github.com/limx-tron2/tron2-rl-deploy-ros)。
+> LimX 内部 GitLab 上的仓库仅为镜像，Issue 与 Pull Request
+> 请统一提交至 GitHub。
+
 # TRON2 ROS 工作区说明（`~/limx_ws/src`）
 
 本目录是 TRON2 在 ROS Noetic 下的源码空间（catkin `src`），包含仿真侧与控制侧两类包。
@@ -144,15 +149,18 @@ roslaunch tron2_hw tron2_controller_sim.launch robot_type:=SF_TRON2A
 ### 4.3 实物部署
 
 ```bash
-roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=10.192.1.2
+roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 ```
 
-> Note on `10.192.1.2`: this is an internal-lab example address and
-> appears in the same form in `tron2_hw/launch/tron2_hw.launch` and
-> `tron2_hw/docs/bringup_mvp.md`. Its value is intentionally left
-> unchanged in this scaffolding pass — legal / SRE sign-off is
-> pending on whether to replace it with a documented placeholder
-> (e.g. `<ROBOT_IP>`). See `THIRD_PARTY_NOTICES.md` §7.
+**关于 `<robot-ip>` 的说明**。文档命令示例中的 `<robot-ip>`
+是占位符——运行前请替换为你自己机器人的实际 IP。源码侧的
+默认值出现在 `tron2_hw/src/Tron2HW.cpp`、
+`tron2_hw/src/tron2_hw_node.cpp`，以及 launch 参数默认值
+`tron2_hw/launch/tron2_hw.launch` 中，保留字面量
+`10.192.1.2` 作为描述典型实机使用场景的文档示例。这仅是
+文档取值，不对应 LimX 任何生产网络中的地址。私网 IP 的
+处理策略详见 [`SECURITY.md`](SECURITY.md) 与
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) §7。
 
 ## 5. 仿真与实机逻辑说明（重要）
 
@@ -223,7 +231,8 @@ find . -name 'package.xml' -exec grep -Hn '<license>' {} \;
 #    match the pre-existing controlled set in THIRD_PARTY_NOTICES.md.
 git ls-files | grep -iE '\.(onnx|pt|pth|ckpt|so(\.[0-9.]+)?|dll|dylib|lib|whl|bag|mcap)$'
 
-# 5. Private-IP scan (only the documented example 10.192.1.2 is allowed).
+# 5. Private-IP scan (only the documented example 10.192.1.2 is allowed;
+#    Markdown/YAML examples should use the <robot-ip> substitution token).
 grep -RIn --exclude-dir=.git -E \
   '\b(10\.[0-9]+\.[0-9]+\.[0-9]+|192\.168\.[0-9]+\.[0-9]+)\b' .
 ```

@@ -6,7 +6,11 @@
 - 确认 `policy.onnx` 和 `encoder.onnx` 放在：
   - `tron2_controllers/config/SF_TRON2A/policy/`
   - `tron2_controllers/config/WF_TRON2A/policy/`
-- 确认 `robot_ip` 与实机一致（默认 launch 为 `10.192.1.2`）
+- 确认 `robot_ip` 与实机一致：本文档命令示例中的 `<robot-ip>`
+  是占位符，运行前请替换为你自己机器人的实际 IP；
+  `tron2_hw/launch/tron2_hw.launch` 的 `robot_ip` 参数默认值为
+  文档示例 `10.192.1.2`（仅为示例取值，非任何生产网络地址，
+  详见 `SECURITY.md`）。
 - 确认遥控器按键映射与 `tron2_hw/config/joystick.yaml` 一致
 
 ## 1. 启动命令
@@ -14,13 +18,13 @@
 ### SF_TRON2A
 
 ```bash
-roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=10.192.1.2
+roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 ```
 
 ### WF_TRON2A
 
 ```bash
-roslaunch tron2_hw tron2_hw.launch robot_type:=WF_TRON2A robot_ip:=10.192.1.2
+roslaunch tron2_hw tron2_hw.launch robot_type:=WF_TRON2A robot_ip:=<robot-ip>
 ```
 
 ## 2. 控制器与安全接口

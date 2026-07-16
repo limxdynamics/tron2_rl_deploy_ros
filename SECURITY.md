@@ -93,6 +93,26 @@ override them.
   start on a physical humanoid is a robot-safety defect, not a UX
   choice.
 
+## Known placeholders and internal identifiers
+
+- **`<robot-ip>` in Markdown / YAML** is a placeholder token, not a
+  real network address. Substitute your robot's actual IP before
+  running any shipped example.
+- **Source-side defaults** in the following files retain the literal
+  `10.192.1.2` as a documentation example describing typical real-
+  hardware usage. This is a documentation value only and is not the
+  address of any LimX production network:
+  - `tron2_hw/src/Tron2HW.cpp:19` — `robot_hw_nh.param<std::string>("robot_ip", robotIp, "10.192.1.2")`
+  - `tron2_hw/src/tron2_hw_node.cpp:23` — same default
+  - `tron2_hw/launch/tron2_hw.launch:3` — `<arg name="robot_ip" default="10.192.1.2"/>`
+- The CI private-IP scan documented in `README.md` §Verification
+  allow-lists that one literal; any other RFC 1918 / RFC 6598 address
+  appearing in-tree is treated as a leak and fails the build.
+- Reports that this repository "exposes an internal LimX IP" that
+  reduce to the documented `10.192.1.2` above are out of scope; any
+  other leaked hostname, credential, or address remains in scope
+  under the primary concerns listed above.
+
 ## Out of scope
 
 - Bugs in third-party components (ROS, ros-control, ONNX Runtime,

@@ -48,7 +48,12 @@ Contributions are held to a higher bar for that reason.
   motion data belong in dedicated data repositories under signed
   redistribution terms.
 - Customer-specific configuration, hostnames, credentials, or private
-  IPs beyond the documented placeholder.
+  IPs. Command examples use `<robot-ip>` as a substitution token;
+  substitute your robot's actual IP before running. The only literal
+  IP that may appear in-tree is the documentation example `10.192.1.2`
+  used as the default value in `tron2_hw/src/Tron2HW.cpp`,
+  `tron2_hw/src/tron2_hw_node.cpp`, and `tron2_hw/launch/tron2_hw.launch`
+  (see `SECURITY.md` §"Known placeholders and internal identifiers").
 - Images or media that disclose office locations, individuals, or
   non-public products.
 - Auto-start behaviour on the real robot (systemd units, udev rules,
@@ -137,8 +142,12 @@ git ls-files | grep -iE '\.(onnx|pt|pth|ckpt|so|dll|dylib|lib|whl|bag|mcap)$'
 
 # 5. Private-IP / hostname scan
 grep -RIn --exclude-dir=.git -E '\b10\.[0-9]+\.[0-9]+\.[0-9]+\b' .
-# Every hit must be the documented placeholder 10.192.1.2, OR an
-# obvious placeholder like <ROBOT_IP>, OR must be discussed in the PR.
+# The only literal that may appear is the documentation example
+# 10.192.1.2 (default in tron2_hw/src/Tron2HW.cpp,
+# tron2_hw/src/tron2_hw_node.cpp, tron2_hw/launch/tron2_hw.launch —
+# see SECURITY.md). All Markdown / YAML command examples must use
+# the <robot-ip> substitution token instead of a literal address.
+# Any other hit must be discussed in the PR.
 ```
 
 ## Model / weight provenance checklist
