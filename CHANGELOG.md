@@ -58,6 +58,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     changed (see "Pending owner sign-off" below).
 
 ### Fixed
+- Controller start-up documented as it behaves: `tron2_hw.launch` starts
+  `tron2_controller` without a button press and joint commands are sent
+  from the first cycle (README §4.4, Scope, `SECURITY.md`,
+  `tron2_hw/docs/bringup_mvp.md`). `bringup_mvp.md` now says L1 + X
+  switches to `IDLE` (it is not an emergency stop) and uses
+  `~/limx_ws/devel/setup.bash`.
+- `robot_ip` has no hard-coded default any more: `tron2_hw.launch`
+  requires the argument and `tron2_hw_node` / `Tron2HW` exit with an
+  error when it is missing. `SECURITY.md`, `THIRD_PARTY_NOTICES.md` §7,
+  `CONTRIBUTING.md` and the README updated.
+- Build docs and CI use limxsdk-lowlevel master again (its `tron2.h` no
+  longer includes unshipped mros headers).
 - README (EN/ZH) reworked: banner, model cards, how-it-works picture,
   highlights and quick start; the build section now clones this
   repository, `tron2_gazebo_ros`, `tron2-robot-description` and

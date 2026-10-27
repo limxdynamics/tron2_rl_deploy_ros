@@ -70,7 +70,6 @@ git clone https://github.com/limxdynamics/tron2_rl_deploy_ros.git
 git clone https://github.com/limxdynamics/tron2_gazebo_ros.git
 git clone https://github.com/limxdynamics/tron2-robot-description.git
 git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-git -C limxsdk-lowlevel checkout 64e3b99   # 4.0.0
 
 cd ~/limx_ws
 source /opt/ros/noetic/setup.bash
@@ -138,12 +137,7 @@ git clone https://github.com/limxdynamics/tron2_rl_deploy_ros.git
 git clone https://github.com/limxdynamics/tron2_gazebo_ros.git
 git clone https://github.com/limxdynamics/tron2-robot-description.git
 git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-git -C limxsdk-lowlevel checkout 64e3b99   # 4.0.0
 ```
-
-Use limxsdk-lowlevel 4.0.0 (`64e3b99`) for now: from v4.1.1 on, its
-`tron2.h` includes `mros/hand_msgs/*.h` headers that are not shipped, so
-`tron2_hw` does not compile.
 
 Then run from the workspace root:
 
@@ -282,7 +276,8 @@ Always suspend the robot before starting the controller during real-hardware dep
 - Gazebo plugin / controller fails to load:
   - Confirm that `tron2_gazebo`, `tron2_hw`, and `tron2_controllers` all built successfully first.
 - `tron2.h` fails with `mros/hand_msgs/HandCmd.h: No such file or directory`:
-  - Check out limxsdk-lowlevel 4.0.0 (`64e3b99`), see section 3.
+  - Update limxsdk-lowlevel (`git -C ~/limx_ws/src/limxsdk-lowlevel pull`);
+    the include was replaced by forward declarations on 2026-10-27.
 - `GripperCmd does not name a type` while building `tron2_hw`:
   - An older copy of the SDK headers shadows limxsdk-lowlevel. Update
     `tron2_gazebo_ros` (its `limxsdk-sim` no longer copies headers into

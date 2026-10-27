@@ -57,7 +57,6 @@ git clone https://github.com/limxdynamics/tron2_rl_deploy_ros.git
 git clone https://github.com/limxdynamics/tron2_gazebo_ros.git
 git clone https://github.com/limxdynamics/tron2-robot-description.git
 git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-git -C limxsdk-lowlevel checkout 64e3b99   # 4.0.0
 
 cd ~/limx_ws
 source /opt/ros/noetic/setup.bash
@@ -122,10 +121,7 @@ git clone https://github.com/limxdynamics/tron2_rl_deploy_ros.git
 git clone https://github.com/limxdynamics/tron2_gazebo_ros.git
 git clone https://github.com/limxdynamics/tron2-robot-description.git
 git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-git -C limxsdk-lowlevel checkout 64e3b99   # 4.0.0
 ```
-
-目前请使用 limxsdk-lowlevel 4.0.0（`64e3b99`）：从 v4.1.1 起它的 `tron2.h` 引用了未随 SDK 发布的 `mros/hand_msgs/*.h`，`tron2_hw` 无法编译。
 
 然后在工作区根目录执行：
 
@@ -247,7 +243,7 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist "{linear: {x: 0.3}}"
 - Gazebo 插件/控制器加载失败：
   - 先确认 `tron2_gazebo`、`tron2_hw`、`tron2_controllers`均已成功编译
 - 编译 `tron2.h` 报 `mros/hand_msgs/HandCmd.h: No such file or directory`：
-  - 把 limxsdk-lowlevel 切到 4.0.0（`64e3b99`），见第 3 节
+  - 更新 limxsdk-lowlevel（`git -C ~/limx_ws/src/limxsdk-lowlevel pull`），2026-10-27 起该引用已改为前置声明
 - 编译 `tron2_hw` 报 `GripperCmd does not name a type`：
   - 旧版 SDK 头文件盖住了 limxsdk-lowlevel 的头文件。更新 `tron2_gazebo_ros`（其 `limxsdk-sim` 已不再把头文件拷进 `devel/include`），然后 `rm -rf build devel` 重新编译
 

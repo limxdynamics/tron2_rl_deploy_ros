@@ -164,10 +164,8 @@ jobs:
           set -e
           cd src
           GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/limxdynamics/tron2-robot-description.git
-          git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-          # limxsdk-lowlevel v4.1.1+ includes mros/hand_msgs headers it does
-          # not ship, so tron2_hw does not compile; pin the 4.0.0 release.
-          git -C limxsdk-lowlevel checkout -q "${LIMXSDK_REF:-64e3b99}"
+          git clone --depth 1 https://github.com/limxdynamics/limxsdk-lowlevel.git
+          echo "::notice::limxsdk-lowlevel @ $(git -C limxsdk-lowlevel rev-parse --short HEAD)"
       - name: catkin_make
         run: |
           source /opt/ros/noetic/setup.bash
