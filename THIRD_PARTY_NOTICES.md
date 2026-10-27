@@ -159,6 +159,15 @@ Downstream users must obtain and license these independently.
 | `doc/sf.GIF`, `doc/wf.GIF`                           | Real-hardware locomotion capture           | ⚠ TO CONFIRM | ⚠ TO CONFIRM |
 | `doc/sfgazebo-ezgif.com-video-to-gif-converter.gif`  | Screen-recorded Gazebo simulation          | ⚠ TO CONFIRM | ⚠ TO CONFIRM |
 | `doc/wfgazebo.gif`                                   | Screen-recorded Gazebo simulation          | ⚠ TO CONFIRM | ⚠ TO CONFIRM |
+| `doc/banner.png`                                     | Rendered banner (SF_TRON2A, WF_TRON2A)     | Rendered by LimX Dynamics from the meshes in [`tron2-robot-description`](https://github.com/limxdynamics/tron2-robot-description) (Apache-2.0) | Apache-2.0 |
+| `doc/model_sf.png`, `doc/model_wf.png`               | Rendered model cards                       | Rendered by LimX Dynamics from the meshes in `tron2-robot-description` | Apache-2.0 |
+| `doc/sim2real_en.png`, `doc/sim2real_zh.png`         | How-it-works diagram                       | Composed by LimX Dynamics from a frame of `doc/sfgazebo-ezgif.com-video-to-gif-converter.gif` and a `tron2-robot-description` render | Apache-2.0 |
+
+On 2026-10-27 the real-robot GIFs were re-encoded from ≈ 50 MB and
+≈ 47 MB to 300 × 300 px at 8 fps (≈ 4 MB each), the Gazebo GIFs were
+cropped to the area the robot walks in, and `deploy.jpg` was converted to
+sRGB without EXIF. Provenance and license of the original captures still
+need owner confirmation.
 
 Before release, run:
 

@@ -9,7 +9,7 @@ contact_links:
       Anything that can move the real robot or defeat the
       emergency-stop service belongs here.
   - name: General questions
-    url: https://github.com/limx-tron2/tron2-rl-deploy-ros/discussions
+    url: https://github.com/limxdynamics/tron2_rl_deploy_ros#8-faq
     about: >
-      Use Discussions for how-to questions, integration help, or
+      Check the README FAQ for how-to questions, integration help, or
       ROS / ONNX Runtime quirks that are not yet a defect.

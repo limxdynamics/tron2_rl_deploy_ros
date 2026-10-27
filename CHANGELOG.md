@@ -58,6 +58,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     changed (see "Pending owner sign-off" below).
 
 ### Fixed
+- README (EN/ZH) reworked: banner, model cards, how-it-works picture,
+  highlights and quick start; the build section now clones this
+  repository, `tron2_gazebo_ros`, `tron2-robot-description` and
+  `limxsdk-lowlevel` 4.0.0. New section 4.4 documents the remote / topic
+  controls, the `tron2_hw` services and the controller start-up
+  behaviour. Real-world GIF captions corrected (`doc/wf.GIF` is
+  SF_TRON2A). Distribution note, Cite & support and issue-template links
+  point at `limxdynamics/tron2_rl_deploy_ros`; the Scope bullet on
+  `<license>` values now matches the Apache-2.0 `package.xml` files.
+  Other License, Scope, safety and private-IP text unchanged; License
+  and Scope moved to the end.
+- Media: Gazebo GIFs cropped, real-world GIFs re-encoded to 300 x 300 at
+  8 fps, `deploy.jpg` without EXIF (`doc/` ~96 MB -> ~12 MB).
+  `THIRD_PARTY_NOTICES.md` lists the new rendered images.
+- CI: listen on `master`; the disabled `catkin-build` job now builds the
+  full workspace in a `ros:noetic` container.
+- `package.xml` and changelog links point at
+  `limxdynamics/tron2_rl_deploy_ros`; `.github/CODEOWNERS` uses
+  `@limxdynamics` instead of the non-existent `@limx-tron2/*` teams.
 - `tron2_hw/launch/tron2_hw.launch`: load the URDF from
   `robot_description/tron2a/<robot_type>/urdf/robot.urdf`, the layout
   used by [`tron2-robot-description`](https://github.com/limxdynamics/tron2-robot-description);
@@ -138,5 +157,5 @@ First public release. Contents (subject to the sign-offs above):
 - Launch files for Gazebo simulation and real-hardware bring-up.
 - Configuration for the `SF_TRON2A` and `WF_TRON2A` variants.
 
-[Unreleased]: https://github.com/limx-tron2/tron2-rl-deploy-ros/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/limx-tron2/tron2-rl-deploy-ros/releases/tag/v0.1.0
+[Unreleased]: https://github.com/limxdynamics/tron2_rl_deploy_ros/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/limxdynamics/tron2_rl_deploy_ros/releases/tag/v0.1.0

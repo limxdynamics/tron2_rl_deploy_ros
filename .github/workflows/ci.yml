@@ -3,9 +3,10 @@ name: ci
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -134,32 +135,49 @@ jobs:
           if [ $bad -ne 0 ]; then exit 1; fi
 
   catkin-build:
-    name: catkin_make (ROS Noetic)
+    name: catkin_make (ROS Noetic, full workspace)
     runs-on: ubuntu-latest
-    # Real build depends on the sibling repositories `robot-description`
-    # and `limxsdk-lowlevel` being available in the workspace. That is
-    # not yet wired up in CI; the job is defined so it can be enabled
-    # by release engineering once those dependencies are published.
-    if: ${{ false }}
     container:
-      image: ros:noetic-ros-base
+      image: ros:noetic-ros-base-focal
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: actions/checkout@v4
-        with:
-          path: src/tron2-rl-deploy-ros
-      - name: Install deps
+      - name: Install dependencies
         run: |
+          set -e
           apt-get update
-          apt-get install -y \
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            git build-essential libeigen3-dev \
             ros-noetic-ros-control \
             ros-noetic-ros-controllers \
             ros-noetic-controller-manager \
             ros-noetic-hardware-interface \
             ros-noetic-realtime-tools \
-            libeigen3-dev \
-            build-essential
+            ros-noetic-urdf
+      - uses: actions/checkout@v4
+        with:
+          path: src/tron2_rl_deploy_ros
+      - name: Fetch sibling packages (as in README section 3)
+        run: |
+          set -e
+          cd src
+          GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/limxdynamics/tron2-robot-description.git
+          git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
+          # limxsdk-lowlevel v4.1.1+ includes mros/hand_msgs headers it does
+          # not ship, so tron2_hw does not compile; pin the 4.0.0 release.
+          git -C limxsdk-lowlevel checkout -q "${LIMXSDK_REF:-64e3b99}"
       - name: catkin_make
-        shell: bash
         run: |
           source /opt/ros/noetic/setup.bash
-          catkin_make
+          set +e
+          catkin_make > /tmp/catkin.log 2>&1
+          rc=$?
+          set -e
+          tail -n 60 /tmp/catkin.log
+          if [ $rc -ne 0 ]; then
+            grep -nE "error|Error|Could not find" /tmp/catkin.log | head -n 10 > /tmp/err.txt || true
+            while IFS= read -r l; do echo "::error::${l:0:400}"; done < /tmp/err.txt
+            exit $rc
+          fi
+          echo "::notice::catkin_make built $(ls devel/lib | tr '\n' ' ')"
