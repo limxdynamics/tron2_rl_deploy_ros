@@ -1,6 +1,7 @@
 <launch>
   <arg name="robot_type" default="SF_TRON2A"/>
-  <arg name="robot_ip" default="10.192.1.2"/>
+  <!-- No default: pass robot_ip:=<robot-ip> (127.0.0.1 for Gazebo). -->
+  <arg name="robot_ip"/>
   <arg name="controller_dt" default="0.005"/>
   <arg name="load_robot_description" default="true"/>
   <!-- Sim-only: delay tron2_hw_node and controller_spawner so Gazebo's plugin

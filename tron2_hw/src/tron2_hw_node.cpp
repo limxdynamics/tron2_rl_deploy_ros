@@ -20,7 +20,11 @@ int main(int argc, char **argv)
     }
 
     std::string robotIp;
-    robotHwNh.param<std::string>("robot_ip", robotIp, std::string("10.192.1.2"));
+    if (!robotHwNh.getParam("robot_ip", robotIp) || robotIp.empty())
+    {
+        ROS_ERROR("Tron2HW: robot_ip is not set. Pass robot_ip:=<robot-ip>, or 127.0.0.1 for Gazebo.");
+        return 1;
+    }
     const bool simMode = (robotIp == "127.0.0.1");
 
     if (simMode)

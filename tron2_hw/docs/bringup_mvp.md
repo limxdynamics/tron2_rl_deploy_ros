@@ -2,15 +2,14 @@
 
 ## 0. 环境准备
 
-- `source /home/tron2-loco-gazebo-sim/devel/setup.bash`
+- `source ~/limx_ws/devel/setup.bash`
 - 确认 `policy.onnx` 和 `encoder.onnx` 放在：
   - `tron2_controllers/config/SF_TRON2A/policy/`
   - `tron2_controllers/config/WF_TRON2A/policy/`
 - 确认 `robot_ip` 与实机一致：本文档命令示例中的 `<robot-ip>`
   是占位符，运行前请替换为你自己机器人的实际 IP；
-  `tron2_hw/launch/tron2_hw.launch` 的 `robot_ip` 参数默认值为
-  文档示例 `10.192.1.2`（仅为示例取值，非任何生产网络地址，
-  详见 `SECURITY.md`）。
+  `tron2_hw/launch/tron2_hw.launch` 的 `robot_ip` 参数没有默认值，
+  必须显式传入（详见 `SECURITY.md`）。
 - 确认遥控器按键映射与 `tron2_hw/config/joystick.yaml` 一致
 
 ## 1. 启动命令
@@ -28,6 +27,12 @@ roslaunch tron2_hw tron2_hw.launch robot_type:=WF_TRON2A robot_ip:=<robot-ip>
 ```
 
 ## 2. 控制器与安全接口
+
+- 启动行为：`tron2_hw.launch` 启动后会自动启动 `tron2_controller`
+  （`controller_spawner` 以及 `tron2_hw_node` 在 1.2 秒后的启动请求），
+  无需按键。控制器从 `STAND` 开始把关节移到默认姿态；关节指令从第一个
+  控制周期起下发，只有机器人上报非 0 的 `calibration` 诊断时才暂停。
+  因此 launch 之前必须先把机器人悬挂好，`roslaunch` 本身就是上电动作。
 
 - 启动控制器（服务）：
 
@@ -54,8 +59,8 @@ rosservice call /tron2_hw/reset_emergency_stop
 ```
 
 - 遥控快捷键：
-  - `L1 + Y`：启动控制器
-  - `L1 + X`：急停并锁存
+  - `L1 + Y`：控制器未运行时启动控制器；已运行时切换到 `WALK`
+  - `L1 + X`：切换到 `IDLE`（不是急停；急停请调用 `/tron2_hw/emergency_stop`）
 
 ## 3. MVP 分阶段验收
 

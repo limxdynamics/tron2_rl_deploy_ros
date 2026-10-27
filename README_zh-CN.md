@@ -170,12 +170,9 @@ roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 ```
 
 **关于 `<robot-ip>` 的说明**。文档命令示例中的 `<robot-ip>`
-是占位符——运行前请替换为你自己机器人的实际 IP。源码侧的
-默认值出现在 `tron2_hw/src/Tron2HW.cpp`、
-`tron2_hw/src/tron2_hw_node.cpp`，以及 launch 参数默认值
-`tron2_hw/launch/tron2_hw.launch` 中，保留字面量
-`10.192.1.2` 作为描述典型实机使用场景的文档示例。这仅是
-文档取值，不对应 LimX 任何生产网络中的地址。私网 IP 的
+是占位符——运行前请替换为你自己机器人的实际 IP。`robot_ip` 没有
+默认值：`tron2_hw.launch` 必须传入该参数，缺少该参数时 `tron2_hw_node`
+会报错退出。源码中不再写死任何机器人地址。私网 IP 的
 处理策略详见 [`SECURITY.md`](SECURITY.md) 与
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) §7。
 
@@ -200,7 +197,7 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist "{linear: {x: 0.3}}"
 
 `tron2_hw` 还提供服务 `/tron2_hw/start_controller`、`/tron2_hw/stop_controller`、`/tron2_hw/emergency_stop` 和 `/tron2_hw/reset_emergency_stop`（见 `tron2_hw/docs/bringup_mvp.md`）。
 
-**启动行为。** 按当前代码，`tron2_hw.launch` 启动后无需按键就会启动 `tron2_controller`：`controller_spawner` 节点会启动它，`tron2_hw_node` 也会在控制循环就绪 1.2 秒后请求启动。控制器从 `STAND` 开始，把所有关节移到默认姿态；机器人上报标定状态 `0` 后指令即下发到关节。launch 之前请先把机器人悬挂好。
+**启动行为。** `tron2_hw.launch` 启动后无需按键就会启动 `tron2_controller`：`controller_spawner` 节点会启动它，`tron2_hw_node` 也会在控制循环就绪 1.2 秒后请求启动。控制器从 `STAND` 开始，把所有关节移到默认姿态。关节指令从第一个控制周期起就会下发，只有机器人上报非 0 的 `calibration` 诊断时才会暂停（`tron2_hw.yaml` 中的 `require_calibration_state` 目前未生效）。因此只有在控制器被停止之后才需要用 L1 + Y 重新启动。launch 之前请先把机器人悬挂好，需要停止时使用 `/tron2_hw/emergency_stop` 或 `/tron2_hw/stop_controller`。
 
 ## 5. 仿真与实机逻辑说明（重要）
 
@@ -353,8 +350,9 @@ SPDX 标识符：`Apache-2.0`。
 - 不包含出厂标定值（单机序列号或全局偏移）。
 - 不包含运动数据 / bag 数据（`*.bag`、`*.mcap`、HDF5 轨迹记录）。
 - 不包含客户或站点定制的配置。
-- 实机上没有自动启动行为 — bring-up 始终需要操作员的
-  显式动作，详见 `SECURITY.md`。
+- 启动 `tron2_hw.launch` 即是让机器人上电工作的操作员动作：它会自动
+  启动 `tron2_controller`，把关节移到默认姿态（见 4.4 节）。launch 前请
+  先悬挂机器人，详见 `SECURITY.md`。
 
 实机 bring-up 细节（含启动 / 停止 / 急停服务名）记录在
 `tron2_hw/docs/bringup_mvp.md`，需机器人安全负责人签署确认后

@@ -189,12 +189,9 @@ roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 
 **Note on `<robot-ip>`.** The `<robot-ip>` token in shipped command
 examples is a placeholder — substitute your robot's actual IP
-before running. The source-side default values in
-`tron2_hw/src/Tron2HW.cpp`, `tron2_hw/src/tron2_hw_node.cpp`, and
-the launch argument default in `tron2_hw/launch/tron2_hw.launch`
-retain the literal `10.192.1.2` as a documentation example
-describing typical real-hardware usage. This is a documentation
-value only and is not the address of any LimX production network.
+before running. `robot_ip` has no default: `tron2_hw.launch` requires
+the argument, and `tron2_hw_node` exits with an error when the
+parameter is missing. No robot address is hard-coded in the source.
 See [`SECURITY.md`](SECURITY.md) and
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) §7 for the
 private-IP handling policy.
@@ -226,12 +223,16 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist "{linear: {x: 0.3}}"
 `/tron2_hw/stop_controller`, `/tron2_hw/emergency_stop` and
 `/tron2_hw/reset_emergency_stop` (see `tron2_hw/docs/bringup_mvp.md`).
 
-**Start-up behaviour.** As shipped, `tron2_hw.launch` starts
-`tron2_controller` without a button press: the `controller_spawner` node
-starts it, and `tron2_hw_node` requests a start 1.2 s after its control
-loop is up. The controller begins in `STAND` and moves every joint to the
-default pose; joint commands reach the robot once it reports calibration
-state `0`. Keep the robot suspended before you launch.
+**Start-up behaviour.** `tron2_hw.launch` starts `tron2_controller`
+without a button press: the `controller_spawner` node starts it, and
+`tron2_hw_node` requests a start 1.2 s after its control loop is up. The
+controller begins in `STAND` and moves every joint to the default pose.
+Joint commands are sent from the first control cycle; they are held back
+only while the robot reports a non-zero `calibration` diagnostic
+(`require_calibration_state` in `tron2_hw.yaml` is currently not used).
+L1 + Y is therefore only needed after the controller has been stopped.
+Keep the robot suspended before you launch, and use
+`/tron2_hw/emergency_stop` or `/tron2_hw/stop_controller` to stop it.
 
 ## 5. Simulation vs real-hardware logic (important safety notes)
 
@@ -395,8 +396,10 @@ file for the full text. SPDX identifier: `Apache-2.0`.
 - No factory-calibration values (per-serial or global offsets).
 - No motion / bag data (`*.bag`, `*.mcap`, HDF5 trajectory captures).
 - No customer-specific or site-specific configuration.
-- No auto-start behaviour on real hardware — bring-up always
-  requires an explicit operator action; see `SECURITY.md`.
+- Launching `tron2_hw.launch` is the operator action that brings the
+  robot up: it starts `tron2_controller` automatically, which moves the
+  joints to the default pose (see section 4.4). Keep the robot suspended
+  before launching; see `SECURITY.md`.
 
 Real-hardware bring-up details, including start / stop / emergency-stop
 service names, are documented in `tron2_hw/docs/bringup_mvp.md` and

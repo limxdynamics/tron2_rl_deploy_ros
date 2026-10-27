@@ -88,23 +88,23 @@ override them.
 - Do **not** replace `onnxruntime_sdk/lib/libonnxruntime.so` with a
   binary whose SHA-256 you have not verified against the value
   recorded in `THIRD_PARTY_NOTICES.md`.
-- Report any launch file, service, or driver that starts controllers
-  automatically on boot without an explicit operator action — auto-
-  start on a physical humanoid is a robot-safety defect, not a UX
-  choice.
+- Known behaviour: launching `tron2_hw/launch/tron2_hw.launch` starts
+  `tron2_controller` without a further button press, and the controller
+  immediately moves the joints to the default pose (see README §4.4).
+  Treat the `roslaunch` as the bring-up action and keep the robot
+  suspended. Report any other launch file, service, or driver that
+  starts controllers automatically on boot without an operator action.
 
 ## Known placeholders and internal identifiers
 
 - **`<robot-ip>` in Markdown / YAML** is a placeholder token, not a
   real network address. Substitute your robot's actual IP before
   running any shipped example.
-- **Source-side defaults** in the following files retain the literal
-  `10.192.1.2` as a documentation example describing typical real-
-  hardware usage. This is a documentation value only and is not the
-  address of any LimX production network:
-  - `tron2_hw/src/Tron2HW.cpp:19` — `robot_hw_nh.param<std::string>("robot_ip", robotIp, "10.192.1.2")`
-  - `tron2_hw/src/tron2_hw_node.cpp:23` — same default
-  - `tron2_hw/launch/tron2_hw.launch:3` — `<arg name="robot_ip" default="10.192.1.2"/>`
+- **No source-side default.** Since 2026-10-27 `robot_ip` has no
+  default value: `tron2_hw/launch/tron2_hw.launch` requires the
+  argument, and `tron2_hw/src/tron2_hw_node.cpp` and
+  `tron2_hw/src/Tron2HW.cpp` refuse to start without it. The literal
+  `10.192.1.2` now only appears in historical changelog text.
 - The CI private-IP scan documented in `README.md` §Verification
   allow-lists that one literal; any other RFC 1918 / RFC 6598 address
   appearing in-tree is treated as a leak and fails the build.

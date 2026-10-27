@@ -16,7 +16,11 @@ bool Tron2HW::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh)
     }
 
     std::string robotIp;
-    robot_hw_nh.param<std::string>("robot_ip", robotIp, "10.192.1.2");
+    if (!robot_hw_nh.getParam("robot_ip", robotIp) || robotIp.empty())
+    {
+        ROS_ERROR("Tron2HW: robot_ip is not set. Pass robot_ip:=<robot-ip>, or 127.0.0.1 for Gazebo.");
+        return false;
+    }
     if (!robot_->init(robotIp))
     {
         ROS_ERROR("limxsdk Tron2::init(\"%s\") failed.", robotIp.c_str());

@@ -88,8 +88,9 @@ jobs:
         run: |
           set -e
           # Any 10.x / 192.168.x / 172.16-31.x address in tracked files
-          # must reduce to the documented example 10.192.1.2 (declared
-          # in SECURITY.md and THIRD_PARTY_NOTICES.md §7). Markdown /
+          # must reduce to 10.192.1.2, which now only appears in
+          # historical CHANGELOG.md text (SECURITY.md,
+          # THIRD_PARTY_NOTICES.md §7). Markdown /
           # YAML command examples should use the <robot-ip> substitution
           # token rather than a literal address.
           allowed_ip='10\.192\.1\.2'

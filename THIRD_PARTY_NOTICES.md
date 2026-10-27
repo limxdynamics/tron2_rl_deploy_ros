@@ -194,16 +194,13 @@ subject to legal / safety review before publication:
 
 - **Private-network robot IP.** All Markdown / YAML command examples
   use `<robot-ip>` as a placeholder token; substitute your robot's
-  actual IP before running. The source-side defaults in
-  `tron2_hw/src/Tron2HW.cpp:19`, `tron2_hw/src/tron2_hw_node.cpp:23`,
-  and the launch argument default in `tron2_hw/launch/tron2_hw.launch:3`
-  retain the literal `10.192.1.2` as a documentation example
-  describing typical real-hardware usage. This is a documentation
-  value only and is not the address of any LimX production network;
-  the private-IP handling policy is declared in `SECURITY.md` under
-  "Known placeholders and internal identifiers". CI's private-IP
-  scan allow-lists that one literal — any other RFC 1918 / RFC 6598
-  address in-tree fails the build.
+  actual IP before running. Since 2026-10-27 the source has no default
+  robot IP: `tron2_hw/launch/tron2_hw.launch` requires `robot_ip`, and
+  `tron2_hw_node` exits when it is missing. The private-IP handling
+  policy is declared in `SECURITY.md` under "Known placeholders and
+  internal identifiers". CI's private-IP scan allow-lists the historical
+  literal `10.192.1.2` (still quoted in `CHANGELOG.md`); any other
+  RFC 1918 / RFC 6598 address in-tree fails the build.
 - Emergency-stop / start / stop service names and topics documented
   in `tron2_hw/docs/bringup_mvp.md`. ⚠ TO CONFIRM by robot-safety
   owner: publishing these interface names is safe (they are already
