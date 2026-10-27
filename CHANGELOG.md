@@ -58,6 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     changed (see "Pending owner sign-off" below).
 
 ### Fixed
+- README §4.4 (EN/ZH): `STAND` only holds the joints; switch to `WALK`
+  as soon as the robot touches down (in Gazebo, during the air hold).
 - Controller start-up documented as it behaves: `tron2_hw.launch` starts
   `tron2_controller` without a button press and joint commands are sent
   from the first cycle (README §4.4, Scope, `SECURITY.md`,

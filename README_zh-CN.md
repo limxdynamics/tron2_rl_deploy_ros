@@ -195,6 +195,8 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist "{linear: {x: 0.3}}"
 
 **启动行为。** `tron2_hw.launch` 启动后无需按键就会启动 `tron2_controller`：`controller_spawner` 节点会启动它，`tron2_hw_node` 也会在控制循环就绪 1.2 秒后请求启动。控制器从 `STAND` 开始，把所有关节移到默认姿态。关节指令从第一个控制周期起就会下发，只有机器人上报非 0 的 `calibration` 诊断时才会暂停（`tron2_hw.yaml` 中的 `require_calibration_state` 目前未生效）。因此只有在控制器被停止之后才需要用 L1 + Y 重新启动。launch 之前请先把机器人悬挂好，需要停止时使用 `/tron2_hw/emergency_stop` 或 `/tron2_hw/stop_controller`。
 
+**`STAND` 不做平衡。** 它只把关节保持在默认姿态。机器人一落地就要切到 `WALK`（L1 + Y 或上面的话题）；在 Gazebo 中要趁 `tron2_hw_sim.launch` 仍把机身悬在空中时切换（`air_hold_duration`，默认 2 秒）。一直停留在 `STAND`，机器人约 2 秒内就会倾倒。
+
 ## 5. 仿真与实机逻辑说明（重要）
 
 结论：**核心控制链路逻辑一致**，都是：
@@ -278,7 +280,7 @@ grep -RIn --exclude-dir=.git -E \
 ```
 
 
-本次整改的 CI（在 [tron2_gazebo_ros](https://github.com/limxdynamics/tron2_gazebo_ros/actions) 中）在 `ros:noetic` 容器里编译了完整工作空间，包括 `tron2_hw`、`tron2_controllers`、`robot_common` 和 `onnxruntime_sdk`。其中无界面 Gazebo 冒烟测试在实时因子约 0.4 的条件下，两台机器人都在 2 秒悬空结束后倒地；尚未在 Ubuntu 20.04 桌面环境复核。真机路径未运行。
+本次整改的 CI（本仓库及 [tron2_gazebo_ros](https://github.com/limxdynamics/tron2_gazebo_ros/actions)）在 `ros:noetic` 容器里编译了完整工作空间，包括 `tron2_hw`、`tron2_controllers`、`robot_common` 和 `onnxruntime_sdk`。Gazebo 冒烟测试中，在悬空期间切换到 `WALK` 后，SF_TRON2A 每次都以 0.73 m 站稳并前进；WF_TRON2A 在实时因子 1.0 时站稳，在 0.23 时倒地，仍需桌面环境复核。真机路径未运行。
 
 ---
 

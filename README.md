@@ -228,6 +228,12 @@ L1 + Y is therefore only needed after the controller has been stopped.
 Keep the robot suspended before you launch, and use
 `/tron2_hw/emergency_stop` or `/tron2_hw/stop_controller` to stop it.
 
+**`STAND` does not balance.** It only holds the joints at the default
+pose. Switch to `WALK` (L1 + Y, or the topic above) as soon as the robot
+touches down; in Gazebo, do it while `tron2_hw_sim.launch` still holds the
+base in the air (`air_hold_duration`, 2 s by default). Left in `STAND`,
+the robot tips over within about 2 s.
+
 ## 5. Simulation vs real-hardware logic (important safety notes)
 
 Bottom line: **the core control chain is identical**, and in both cases it is:
@@ -314,13 +320,14 @@ grep -RIn --exclude-dir=.git -E \
 ```
 
 
-CI for this pass built the full workspace in a `ros:noetic` container (in
+CI for this pass built the full workspace in a `ros:noetic` container
+(here and in
 [tron2_gazebo_ros](https://github.com/limxdynamics/tron2_gazebo_ros/actions)),
 including `tron2_hw`, `tron2_controllers`, `robot_common` and
-`onnxruntime_sdk`. Its headless Gazebo smoke test, at a real-time factor
-of about 0.4, saw both robots drop to the ground after the 2 s air hold;
-this has not yet been checked on an Ubuntu 20.04 desktop. The real-robot
-path was not run.
+`onnxruntime_sdk`. In the Gazebo smoke test, with `WALK` sent during the
+air hold, SF_TRON2A stood at 0.73 m and walked forward in every run;
+WF_TRON2A stood in a run at real-time factor 1.0 but fell in one at 0.23
+and still needs a desktop check. The real-robot path was not run.
 
 ---
 
