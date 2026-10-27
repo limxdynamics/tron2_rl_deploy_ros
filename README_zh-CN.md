@@ -65,7 +65,7 @@ source devel/setup.bash
 roslaunch tron2_hw tron2_hw_sim.launch robot_type:=SF_TRON2A use_joystick:=false
 ```
 
-然后在另一个终端切换到行走（见 [4.4 节](#44-手柄与话题)）。真机上把最后一行换成 `roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>`，并先阅读 4.4 节和第 5 节。
+`use_joystick:=false` 适合没有手柄的机器，有手柄就去掉该参数。然后在另一个终端切换到 `WALK`（见 [4.4 节](#44-手柄与话题)）——仿真中要在机身放下之前完成。真机上改用 [4.3 节](#43-实物部署)的命令，并先阅读[第 5 节](#5-仿真与实机逻辑说明重要)。
 
 ---
 
@@ -113,29 +113,7 @@ sudo apt-get install -y \
 
 ## 3. 编译
 
-先把四个仓库克隆到工作空间：
-
-```bash
-mkdir -p ~/limx_ws/src && cd ~/limx_ws/src
-git clone https://github.com/limxdynamics/tron2_rl_deploy_ros.git
-git clone https://github.com/limxdynamics/tron2_gazebo_ros.git
-git clone https://github.com/limxdynamics/tron2-robot-description.git
-git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-```
-
-然后在工作区根目录执行：
-
-```bash
-cd ~/limx_ws
-source /opt/ros/noetic/setup.bash
-catkin_make
-```
-
-编译成功后建议加载环境：
-
-```bash
-source ~/limx_ws/devel/setup.bash
-```
+克隆、`catkin_make` 和 `source devel/setup.bash` 的命令都在[快速开始](#快速开始)里。`catkin_make` 必须在工作区根目录（`~/limx_ws`）执行，不能在 `src/` 下。移动或重命名包目录后编译失败的处理见[常见问题](#8-常见问题)。
 
 ## 4. 运行示例
 
@@ -165,10 +143,8 @@ roslaunch tron2_hw tron2_controller_sim.launch robot_type:=SF_TRON2A
 roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 ```
 
-**关于 `<robot-ip>` 的说明**。文档命令示例中的 `<robot-ip>`
-是占位符——运行前请替换为你自己机器人的实际 IP。`robot_ip` 没有
-默认值：`tron2_hw.launch` 必须传入该参数，缺少该参数时 `tron2_hw_node`
-会报错退出。源码中不再写死任何机器人地址。私网 IP 的
+**关于 `<robot-ip>` 的说明**。`robot_ip` 没有默认值：`tron2_hw.launch`
+必须传入该参数，缺少该参数时 `tron2_hw_node` 会报错退出。源码中不再写死任何机器人地址。私网 IP 的
 处理策略详见 [`SECURITY.md`](SECURITY.md) 与
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) §7。
 
@@ -199,11 +175,7 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist "{linear: {x: 0.3}}"
 
 ## 5. 仿真与实机逻辑说明（重要）
 
-结论：**核心控制链路逻辑一致**，都是：
-
-- `tron2_hw_node`（`Tron2HW`） -> `RobotHWLoop` -> `controller_manager` -> `tron2_controller`
-
-但两者有输入侧差异：
+两种模式跑的是[亮点](#亮点)里那条控制链路，只有输入侧有差异：
 
 - 仿真（`tron2_hw_sim.launch`）默认还会发 `/cmd_vel` 和 `/tron2_controller/set_mode`。
 - 实机（`tron2_hw.launch`）主要走 SDK 订阅的通道。
@@ -226,8 +198,6 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist "{linear: {x: 0.3}}"
 | <img src="doc/sfgazebo-ezgif.com-video-to-gif-converter.gif" alt="SF Gazebo" width="400"> | <img src="doc/wfgazebo.gif" alt="WF Gazebo" width="400"> |
 
 ### 7.2 实机部署
-
-实机部署时请悬挂启动控制器
 
 <img src="doc/deploy.jpg" alt="Deploy" width="360">
 

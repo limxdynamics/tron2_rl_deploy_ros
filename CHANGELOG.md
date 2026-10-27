@@ -105,6 +105,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   **names** are preserved (`tron2_hw`, `tron2_controllers`,
   `robot_common`, `onnxruntime_sdk`) for downstream `<depend>`
   compatibility.
+- `README.md` / `README_zh-CN.md`: removed material that appeared more
+  than once. The clone -> `catkin_make` -> `source devel/setup.bash`
+  sequence was written out in full in both Quick start and section 3,
+  the `robot_ip` command appeared three times, the "keep the robot
+  suspended" warning four times, and the control chain in both
+  Highlights and section 5. Section 3 now points at Quick start and
+  section 5 at Highlights. No technical content was removed and the
+  section numbering is unchanged (`CONTRIBUTING.md` links to §1, the
+  CI workflow comment to §3).
 
 ### Pending owner sign-off (blocks first public tag)
 

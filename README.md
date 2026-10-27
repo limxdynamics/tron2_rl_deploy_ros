@@ -78,10 +78,11 @@ source devel/setup.bash
 roslaunch tron2_hw tron2_hw_sim.launch robot_type:=SF_TRON2A use_joystick:=false
 ```
 
-Then switch to walking from a second terminal (see [section 4.4](#44-gamepad-and-topics)).
-On the robot, replace the last line with
-`roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>`
-and read section 4.4 and section 5 first.
+`use_joystick:=false` suits a machine without a gamepad; drop it if you have one.
+Then switch to `WALK` from a second terminal (see [section 4.4](#44-gamepad-and-topics)) —
+in simulation, before the base is lowered. On the robot, use the command in
+[4.3](#43-real-hardware-deployment) instead and read
+[section 5](#5-simulation-vs-real-hardware-logic-important-safety-notes) first.
 
 ---
 
@@ -129,29 +130,7 @@ sudo apt-get install -y \
 
 ## 3. Build
 
-Clone the four repositories into the workspace:
-
-```bash
-mkdir -p ~/limx_ws/src && cd ~/limx_ws/src
-git clone https://github.com/limxdynamics/tron2_rl_deploy_ros.git
-git clone https://github.com/limxdynamics/tron2_gazebo_ros.git
-git clone https://github.com/limxdynamics/tron2-robot-description.git
-git clone https://github.com/limxdynamics/limxsdk-lowlevel.git
-```
-
-Then run from the workspace root:
-
-```bash
-cd ~/limx_ws
-source /opt/ros/noetic/setup.bash
-catkin_make
-```
-
-After a successful build, load the workspace environment:
-
-```bash
-source ~/limx_ws/devel/setup.bash
-```
+The clone, `catkin_make` and `source devel/setup.bash` commands are in [Quick start](#quick-start). `catkin_make` must run at the workspace root (`~/limx_ws`), not inside `src/`. If a build starts failing after you move or rename a package directory, see the [FAQ](#8-faq).
 
 ## 4. Running the examples
 
@@ -181,9 +160,7 @@ roslaunch tron2_hw tron2_controller_sim.launch robot_type:=SF_TRON2A
 roslaunch tron2_hw tron2_hw.launch robot_type:=SF_TRON2A robot_ip:=<robot-ip>
 ```
 
-**Note on `<robot-ip>`.** The `<robot-ip>` token in shipped command
-examples is a placeholder — substitute your robot's actual IP
-before running. `robot_ip` has no default: `tron2_hw.launch` requires
+**Note on `<robot-ip>`.** `robot_ip` has no default: `tron2_hw.launch` requires
 the argument, and `tron2_hw_node` exits with an error when the
 parameter is missing. No robot address is hard-coded in the source.
 See [`SECURITY.md`](SECURITY.md) and
@@ -236,11 +213,7 @@ the robot tips over within about 2 s.
 
 ## 5. Simulation vs real-hardware logic (important safety notes)
 
-Bottom line: **the core control chain is identical**, and in both cases it is:
-
-- `tron2_hw_node` (`Tron2HW`) -> `RobotHWLoop` -> `controller_manager` -> `tron2_controller`
-
-The two modes only differ on the input side:
+Both modes run the control chain given in [Highlights](#highlights); they differ only on the input side:
 
 - Simulation (`tron2_hw_sim.launch`) additionally publishes `/cmd_vel` and `/tron2_controller/set_mode` by default.
 - Real hardware (`tron2_hw.launch`) receives its inputs mainly through the SDK-subscribed channels.
@@ -263,8 +236,6 @@ The primary control parameters live in:
 | <img src="doc/sfgazebo-ezgif.com-video-to-gif-converter.gif" alt="SF Gazebo" width="400"> | <img src="doc/wfgazebo.gif" alt="WF Gazebo" width="400"> |
 
 ### 7.2 Real-hardware deployment
-
-Always suspend the robot before starting the controller during real-hardware deployment.
 
 <img src="doc/deploy.jpg" alt="Deploy" width="360">
 
