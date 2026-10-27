@@ -57,6 +57,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     unresolved `<license>` line — the underlying value is **not**
     changed (see "Pending owner sign-off" below).
 
+### Fixed
+- `tron2_hw/launch/tron2_hw.launch`: load the URDF from
+  `robot_description/tron2a/<robot_type>/urdf/robot.urdf`, the layout
+  used by [`tron2-robot-description`](https://github.com/limxdynamics/tron2-robot-description);
+  the old `tron2/` path did not exist there. Matches the same fix in
+  `tron2_gazebo_ros`.
+
 ### Changed
 - `<version>` bumped to `0.1.0` across all four `package.xml` files
   (previously `0.0.0` for `tron2_controllers` per the task brief,

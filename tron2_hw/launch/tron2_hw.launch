@@ -17,7 +17,7 @@
 
   <param name="policyFile" value="$(find tron2_controllers)/config/$(arg robot_type)/policy/policy.onnx"/>
   <param name="encoderFile" value="$(find tron2_controllers)/config/$(arg robot_type)/policy/encoder.onnx"/>
-  <param if="$(arg load_robot_description)" name="robot_description" command="cat $(find robot_description)/tron2/$(arg robot_type)/urdf/robot.urdf"/>
+  <param if="$(arg load_robot_description)" name="robot_description" command="cat $(find robot_description)/tron2a/$(arg robot_type)/urdf/robot.urdf"/>
 
   <rosparam file="$(find tron2_hw)/config/tron2_hw.yaml" command="load"/>
   <rosparam file="$(find tron2_hw)/config/joystick.yaml" command="load"/>
