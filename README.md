@@ -20,6 +20,8 @@
 
 # tron2_rl_deploy_ros
 
+> **Part of the TRON2 open-source ecosystem.** Where to start and the other TRON2 repositories: [TRON2 quick start](https://github.com/limxdynamics/limxdynamics/blob/main/doc/quickstart.md#tron2).
+
 > **Distribution.** The primary distribution of this repository is
 > [`github.com/limxdynamics/tron2_rl_deploy_ros`](https://github.com/limxdynamics/tron2_rl_deploy_ros).
 > LimX's internal GitLab hosts a mirror; please open issues and pull
