@@ -275,7 +275,6 @@ grep -RIn --exclude-dir=.git -E \
 - **提问 / 集成协助**：先查看[常见问题](#8-常见问题)，再提交 [GitHub Issue](https://github.com/limxdynamics/tron2_rl_deploy_ros/issues)。
 - **安全或机器人安全问题上报**：邮件发送至 `contact@limxdynamics.com`，
   主题前缀请使用 `[tron2-rl-deploy-ros]`；详见 [`SECURITY.md`](SECURITY.md)。
-- **公司 / 商务联系**：<https://www.limxdynamics.com>。
 
 ---
 

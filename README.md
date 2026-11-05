@@ -324,7 +324,6 @@ cite the repository:
 - **Questions / integration help:** see the [FAQ](#8-faq) first, then open a [GitHub issue](https://github.com/limxdynamics/tron2_rl_deploy_ros/issues).
 - **Security or robot-safety reports:** email `contact@limxdynamics.com`
   with subject prefix `[tron2-rl-deploy-ros]`; see [`SECURITY.md`](SECURITY.md).
-- **Company / commercial contact:** <https://www.limxdynamics.com>.
 
 ---
 
