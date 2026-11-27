@@ -17,7 +17,7 @@ jobs:
     name: Lint / license & provenance scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: package.xml well-formedness
         run: |
@@ -156,7 +156,7 @@ jobs:
             ros-noetic-hardware-interface \
             ros-noetic-realtime-tools \
             ros-noetic-urdf
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: src/tron2_rl_deploy_ros
       - name: Fetch sibling packages (as in README section 3)
